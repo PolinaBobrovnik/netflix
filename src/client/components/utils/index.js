@@ -7,6 +7,8 @@ export const getMetadata = (query, callback) => {
   });
 };
 
+// fetch(`${path}${searchBy === "title" ? "movie" : "tv"}/${id}?${key}`)
+
 export const itemProps = {
   tv: {
     title: 'name',

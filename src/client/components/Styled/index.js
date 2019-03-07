@@ -23,6 +23,7 @@ export const CenteredWrapper = styled.div`
 
 export const Div = styled.div`
   background-color: #302626;
+  background-image: url(../../../../public/background.jpg);
   padding: 15px 60px 15px 60px;
 `;
 

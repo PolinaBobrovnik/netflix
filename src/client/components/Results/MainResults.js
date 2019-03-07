@@ -7,6 +7,7 @@ import { itemProps } from '../utils';
 
 export default function MainResults(props) {
   const { data, genres, searchBy } = props;
+  console.log(data, genres, searchBy);
 
   const getGenres = (genreIds) => {
     const itemGenres = genres.genres.filter(genre => genreIds.includes(genre.id))
@@ -24,7 +25,8 @@ export default function MainResults(props) {
             image: item.poster_path,
             title: item[itemProps[searchBy].title],
             date: getYear(item[itemProps[searchBy].date]),
-            genres: getGenres(item.genre_ids)
+            genres: getGenres(item.genre_ids),
+            id: item.id,
           };
           return (
             <ResultsItem

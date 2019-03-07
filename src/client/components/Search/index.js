@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import SearchField from './SearchField';
@@ -14,7 +15,7 @@ const FlexDiv = styled.div`
   padding-top: 20px;
 `;
 
-export default class Search extends React.Component {
+class Search extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,7 +32,7 @@ export default class Search extends React.Component {
   render() {
     const { searchQuery } = this.state;
     const {
-      searchBy, filterNames, filterChanged, handleSubmit
+      searchBy, filterNames, filterChanged, history,
     } = this.props;
     return (
       <CenteredWrapper>
@@ -41,7 +42,9 @@ export default class Search extends React.Component {
           <SearchField
             value={searchQuery}
             onChange={this.handleChange}
-            onKeyPress={() => handleSubmit(searchQuery)}
+            onKeyPress={() => {
+              history.push(`/search/${searchQuery}`);
+            }}
           />
           <FlexDiv>
             <SearchFilter
@@ -49,7 +52,10 @@ export default class Search extends React.Component {
               filterNames={filterNames}
               filterChanged={filterChanged}
             />
-            <SearchButton onClick={() => handleSubmit(searchQuery)} />
+            <SearchButton onClick={() => {
+              history.push(`/search/${searchQuery}`);
+            }}
+            />
           </FlexDiv>
         </Div>
       </CenteredWrapper>
@@ -58,15 +64,17 @@ export default class Search extends React.Component {
 }
 
 Search.propTypes = {
-  handleSubmit: PropTypes.func,
   filterChanged: PropTypes.func,
   searchBy: PropTypes.string,
   filterNames: PropTypes.array,
+  history: PropTypes.object,
 };
 
 Search.defaultProps = {
-  handleSubmit: () => {},
   filterChanged: () => {},
   searchBy: '',
   filterNames: [],
+  history: {},
 };
+
+export default withRouter(Search);

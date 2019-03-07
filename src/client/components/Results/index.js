@@ -4,17 +4,43 @@ import moment from 'moment';
 import ResultsInfo from './ResultsInfo';
 import MainResults from './MainResults';
 import { CenteredWrapper } from '../Styled';
-import { itemProps } from '../utils';
+import { itemProps, getMetadata } from '../utils';
+import { API_KEY } from '../utils/constants';
 
 export default class Results extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      data: {},
       sortBy: 'rating',
       sorterNames: ['release date', 'rating'],
     };
 
     this.sorterChanged = this.sorterChanged.bind(this);
+    this.dataReceived = this.dataReceived.bind(this);
+  }
+
+  componentDidMount(prevProps) {
+    if (this.props.match.params.searchQuery) {
+      this.getData(this.props.match.params.searchQuery);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.searchQuery !== prevProps.match.params.searchQuery ||
+      this.props.searchBy !== prevProps.searchBy) {
+      this.getData(this.props.match.params.searchQuery);
+    }
+  }
+
+  getData(searchQuery, searchByParam) {
+    const { searchBy } = this.props;
+    const url = `/search/${searchByParam || searchBy}?api_key=${API_KEY}&query=${searchQuery}&page=1`;
+    getMetadata(url, this.dataReceived);
+  }
+
+  dataReceived(data) {
+    this.setState({ data });
   }
 
   sortData(data) {
@@ -34,8 +60,8 @@ export default class Results extends React.Component {
   }
 
   render() {
-    const { data, genres, searchBy } = this.props;
-    const { sortBy, sorterNames } = this.state;
+    const { genres, searchBy } = this.props;
+    const { sortBy, sorterNames, data } = this.state;
     const sortedData = data.results ? this.sortData(data.results) : data.results;
     return (
       <CenteredWrapper>
@@ -52,13 +78,11 @@ export default class Results extends React.Component {
 }
 
 Results.propTypes = {
-  data: PropTypes.object,
   genres: PropTypes.object,
   searchBy: PropTypes.string
 };
 
 Results.defaultProps = {
-  data: {},
   genres: {},
   searchBy: ''
 };
