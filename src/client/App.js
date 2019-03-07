@@ -1,5 +1,8 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { setGenres } from './actions';
 import Results from './components/Results';
 import Search from './components/Search';
 import Film from './components/Film';
@@ -9,11 +12,10 @@ import {
   SpanPink, Footer, Wrapper, Content
 } from './components/Styled';
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      genres: {},
       searchBy: 'movie',
       filterNames: ['movie', 'tv'],
     };
@@ -33,7 +35,8 @@ export default class App extends React.Component {
   }
 
   genresReceived(genres) {
-    this.setState({ genres });
+    const { dispatch } = this.props;
+    dispatch(setGenres(genres));
   }
 
   filterChanged(value) {
@@ -43,8 +46,9 @@ export default class App extends React.Component {
 
   render() {
     const {
-      genres, searchBy, filterNames
+      searchBy, filterNames
     } = this.state;
+    const { genres } = this.props;
     return (
       <Wrapper>
         <Content>
@@ -81,3 +85,7 @@ export default class App extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({ genres: state.genres });
+
+export default connect(mapStateToProps)(App);

@@ -39,12 +39,10 @@ export default class Film extends React.Component {
   }
 
   dataReceived(data) {
-    console.log(data);
     this.setState({ data });
   }
 
   similarReceived(similarFilms) {
-    console.log(similarFilms);
     this.setState({ similarFilms });
   }
 
