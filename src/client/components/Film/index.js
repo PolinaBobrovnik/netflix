@@ -1,25 +1,15 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import RelativeInfo from './RelativeInfo';
 import FilmInfo from './FilmInfo';
 import MainResults from '../Results/MainResults';
 import { CenteredWrapper } from '../Styled';
-import { getMetadata } from '../utils';
 import { API_KEY } from '../utils/constants';
+import { getFilmData, getFilmSimilar } from '../../actions/index';
 
-export default class Film extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: {},
-      similarFilms: {},
-    };
-    this.dataReceived = this.dataReceived.bind(this);
-    this.similarReceived = this.similarReceived.bind(this);
-  }
-
+class Film extends React.Component {
   componentDidMount() {
     this.getData(this.props.match.params.filmId);
   }
@@ -31,27 +21,20 @@ export default class Film extends React.Component {
   }
 
   getData(filmId) {
-    const { searchBy } = this.props;
+    const { searchBy, dispatch } = this.props;
     const filmUrl = `/${searchBy}/${filmId}?api_key=${API_KEY}`;
     const similarUrl = `/${searchBy}/${filmId}/similar?api_key=${API_KEY}`;
-    getMetadata(filmUrl, this.dataReceived);
-    getMetadata(similarUrl, this.similarReceived);
-  }
-
-  dataReceived(data) {
-    this.setState({ data });
-  }
-
-  similarReceived(similarFilms) {
-    this.setState({ similarFilms });
+    dispatch(getFilmData(filmUrl));
+    dispatch(getFilmSimilar(similarUrl));
   }
 
   render() {
-    const { genres, searchBy } = this.props;
-    const { data, similarFilms } = this.state;
+    const {
+      genres, searchBy, similarFilms
+    } = this.props;
     return (
       <CenteredWrapper>
-        <FilmInfo data={data} />
+        <FilmInfo />
         <RelativeInfo />
         <MainResults data={similarFilms.results} genres={genres} searchBy={searchBy} />
       </CenteredWrapper>
@@ -59,12 +42,10 @@ export default class Film extends React.Component {
   }
 }
 
-Film.propTypes = {
-  genres: PropTypes.object,
-  searchBy: PropTypes.string
-};
+const mapStateToProps = state => ({
+  genres: state.genres,
+  searchBy: state.searchData.searchBy,
+  similarFilms: state.filmData.similarFilms,
+});
 
-Film.defaultProps = {
-  genres: {},
-  searchBy: ''
-};
+export default connect(mapStateToProps)(Film);

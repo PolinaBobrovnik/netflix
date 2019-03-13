@@ -1,10 +1,8 @@
 import { PATH } from './constants';
 
-export const getMetadata = (query, callback) => {
+export const fetchMetadata = (query) => {
   const url = `${PATH}${query}`;
-  fetch(url).then(response => response.json()).then((results) => {
-    callback(results);
-  });
+  return fetch(url).then(response => response.json());
 };
 
 // fetch(`${path}${searchBy === "title" ? "movie" : "tv"}/${id}?${key}`)

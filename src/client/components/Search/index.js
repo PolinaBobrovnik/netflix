@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import SearchField from './SearchField';
 import SearchFilter from './SearchFilter';
 import SearchButton from './SearchButton';
@@ -31,9 +32,7 @@ class Search extends React.Component {
 
   render() {
     const { searchQuery } = this.state;
-    const {
-      searchBy, filterNames, filterChanged, history,
-    } = this.props;
+    const { history } = this.props;
     return (
       <CenteredWrapper>
         <Div>
@@ -47,11 +46,7 @@ class Search extends React.Component {
             }}
           />
           <FlexDiv>
-            <SearchFilter
-              value={searchBy}
-              filterNames={filterNames}
-              filterChanged={filterChanged}
-            />
+            <SearchFilter />
             <SearchButton onClick={() => {
               history.push(`/search/${searchQuery}`);
             }}
@@ -63,18 +58,4 @@ class Search extends React.Component {
   }
 }
 
-Search.propTypes = {
-  filterChanged: PropTypes.func,
-  searchBy: PropTypes.string,
-  filterNames: PropTypes.array,
-  history: PropTypes.object,
-};
-
-Search.defaultProps = {
-  filterChanged: () => {},
-  searchBy: '',
-  filterNames: [],
-  history: {},
-};
-
-export default withRouter(Search);
+export default withRouter(connect()(Search));

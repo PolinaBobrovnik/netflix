@@ -1,6 +1,9 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { updateGenres, setSearchBy } from '../../actions';
+import { API_KEY } from '../utils/constants';
 
 const Button = styled.button`
   color: white;
@@ -24,32 +27,30 @@ const Span = styled.span`
   display: inline-block;
 `;
 
-export default class SearchFilter extends React.Component {
+class SearchFilter extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: props.value };
 
     this.filterChanged = this.filterChanged.bind(this);
   }
 
   filterChanged(event) {
+    const { dispatch } = this.props;
     const value = event.target.textContent;
-    const { filterChanged } = this.props;
-
-    this.setState({ value });
-    filterChanged(value);
+    const url = `/genre/${value}/list?api_key=${API_KEY}&language=en_EN`;
+    dispatch(setSearchBy(value));
+    dispatch(updateGenres(url));
   }
 
   render() {
-    const { filterNames } = this.props;
-    const { value } = this.state;
+    const { filterNames, searchBy } = this.props;
     return (
       <div>
         <Span>Search by</Span>
         {filterNames.map(name => (
           <Button
             key={name}
-            inputColor={value === name ? 'active' : ''}
+            inputColor={searchBy === name ? 'active' : ''}
             type="button"
             onClick={this.filterChanged}
           >
@@ -61,14 +62,9 @@ export default class SearchFilter extends React.Component {
   }
 }
 
-SearchFilter.propTypes = {
-  filterChanged: PropTypes.func,
-  filterNames: PropTypes.array,
-  value: PropTypes.string
-};
+const mapStateToProps = state => ({
+  searchBy: state.searchData.searchBy,
+  filterNames: state.searchData.filterNames,
+});
 
-SearchFilter.defaultProps = {
-  filterChanged: () => {},
-  filterNames: ['button1', 'button2'],
-  value: ''
-};
+export default connect(mapStateToProps)(SearchFilter);

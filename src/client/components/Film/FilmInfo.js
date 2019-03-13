@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { CenteredWrapper, Div, SpanPink } from '../Styled';
 import SearchButton from '../Search/SearchButton';
 
-export default function FilmInfo(props) {
-  const { data } = props;
+function FilmInfo({ data }) {
   return (
     <CenteredWrapper>
       <Div>
@@ -23,3 +23,9 @@ FilmInfo.propTypes = {
 FilmInfo.defaultProps = {
   data: {},
 };
+
+const mapStateToProps = state => ({
+  data: state.filmData.data,
+});
+
+export default connect(mapStateToProps)(FilmInfo);

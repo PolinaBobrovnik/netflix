@@ -1,82 +1,35 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { setGenres } from './actions';
+import { updateGenres } from './actions';
 import Results from './components/Results';
 import Search from './components/Search';
 import Film from './components/Film';
-import { getMetadata } from './components/utils';
 import { API_KEY } from './components/utils/constants';
 import {
   SpanPink, Footer, Wrapper, Content
 } from './components/Styled';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      searchBy: 'movie',
-      filterNames: ['movie', 'tv'],
-    };
-
-    this.genresReceived = this.genresReceived.bind(this);
-    this.filterChanged = this.filterChanged.bind(this);
-  }
-
   componentDidMount() {
-    const { searchBy } = this.state;
-    this.updateGenres(searchBy);
-  }
-
-  updateGenres(searchBy) {
+    const { searchBy, dispatch } = this.props;
     const url = `/genre/${searchBy}/list?api_key=${API_KEY}&language=en_EN`;
-    getMetadata(url, this.genresReceived);
-  }
-
-  genresReceived(genres) {
-    const { dispatch } = this.props;
-    dispatch(setGenres(genres));
-  }
-
-  filterChanged(value) {
-    this.setState({ searchBy: value });
-    this.updateGenres(value);
+    dispatch(updateGenres(url));
   }
 
   render() {
-    const {
-      searchBy, filterNames
-    } = this.state;
-    const { genres } = this.props;
     return (
       <Wrapper>
         <Content>
           <Route
             exact
             path={['/', '/search/:searchQuery']}
-            render={() => (
-              <Search
-                dataReceived={this.dataReceived}
-                searchBy={searchBy}
-                filterNames={filterNames}
-                filterChanged={this.filterChanged}
-              />
-            )}
+            component={Search}
           />
-          <Route
-            exact
-            path="/"
-            render={props => <Results {...props} />}
-          />
-          <Route
-            path="/search/:searchQuery"
-            render={props => <Results {...props} genres={genres} searchBy={searchBy} />}
-          />
-          <Route
-            path="/film/:filmId"
-            render={props => <Film {...props} genres={genres} searchBy={searchBy} />}
-          />
+          <Route exact path="/" component={Results} />
+          <Route path="/search/:searchQuery" component={Results} />
+          <Route path="/film/:filmId" component={Film} />
         </Content>
         <Footer>
           <SpanPink>netflixroulette</SpanPink>
@@ -86,6 +39,8 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({ genres: state.genres });
+const mapStateToProps = state => ({
+  searchBy: state.searchData.searchBy,
+});
 
-export default connect(mapStateToProps)(App);
+export default withRouter(connect(mapStateToProps)(App));

@@ -1,6 +1,6 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import ResultsCount from './ResultsCount';
 import ResultsFilter from './ResultsFilter';
 
@@ -12,32 +12,11 @@ const FlexDiv = styled.div`
   font-weight: bold;
 `;
 
-export default function ResultsInfo(props) {
-  const {
-    numberOfResults, value, sorterNames, sorterChanged
-  } = props;
+export default function ResultsInfo() {
   return (
     <FlexDiv>
-      <ResultsCount numberOfResults={numberOfResults} />
-      <ResultsFilter
-        value={value}
-        sorterNames={sorterNames}
-        sorterChanged={sorterChanged}
-      />
+      <ResultsCount />
+      <ResultsFilter />
     </FlexDiv>
   );
 }
-
-ResultsInfo.propTypes = {
-  numberOfResults: PropTypes.number,
-  sorterChanged: PropTypes.func,
-  sorterNames: PropTypes.array,
-  value: PropTypes.string
-};
-
-ResultsInfo.defaultProps = {
-  numberOfResults: 0,
-  sorterChanged: () => {},
-  sorterNames: ['anchor1', 'anchor2'],
-  value: ''
-};

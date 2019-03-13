@@ -7,7 +7,6 @@ import { itemProps } from '../utils';
 
 export default function MainResults(props) {
   const { data, genres, searchBy } = props;
-  console.log(data, genres, searchBy);
 
   const getGenres = (genreIds) => {
     const itemGenres = genres.genres.filter(genre => genreIds.includes(genre.id))

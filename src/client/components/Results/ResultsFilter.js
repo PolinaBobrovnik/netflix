@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { setSortBy } from '../../actions/index';
 
 const Div = styled.div`
   color: #4a4a4a;
@@ -18,50 +20,30 @@ const SortDiv = styled.div`
     }
 `;
 
-export default class ResultsFilter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { value: props.value };
-
-    this.sorterChanged = this.sorterChanged.bind(this);
-  }
-
-  sorterChanged(event) {
-    const value = event.target.textContent;
-    const { sorterChanged } = this.props;
-
-    this.setState({ value });
-    sorterChanged(value);
-  }
-
-  render() {
-    const { sorterNames } = this.props;
-    const { value } = this.state;
-    return (
-      <Div>
-        <div>Sort by</div>
-        {sorterNames.map(name => (
-          <SortDiv
-            key={name}
-            inputColor={value === name ? 'active' : ''}
-            onClick={this.sorterChanged}
-          >
-            {name}
-          </SortDiv>
-        ))}
-      </Div>
-    );
-  }
+function ResultsFilter({
+  dispatch, value, sorterNames
+}) {
+  return (
+    <Div>
+      <div>Sort by</div>
+      {sorterNames.map(name => (
+        <SortDiv
+          key={name}
+          inputColor={value === name ? 'active' : ''}
+          onClick={(event) => {
+            dispatch(setSortBy(event.target.textContent));
+          }}
+        >
+          {name}
+        </SortDiv>
+      ))}
+    </Div>
+  );
 }
 
-ResultsFilter.propTypes = {
-  sorterChanged: PropTypes.func,
-  sorterNames: PropTypes.array,
-  value: PropTypes.string
-};
+const mapStateToProps = state => ({
+  value: state.resultsData.sortBy,
+  sorterNames: state.resultsData.sorterNames,
+});
 
-ResultsFilter.defaultProps = {
-  sorterChanged: () => {},
-  sorterNames: ['anchor1', 'anchor2'],
-  value: ''
-};
+export default connect(mapStateToProps)(ResultsFilter);
